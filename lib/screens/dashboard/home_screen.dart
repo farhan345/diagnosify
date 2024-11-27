@@ -1,4 +1,4 @@
-import 'package:diagnosify/screens/upload_image.dart';
+import 'package:diagnosify/screens/dashboard/upload_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -57,13 +57,14 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       children: [
-                        _buildDiseaseCard(context, 'Heart Disease', Icons.favorite, Colors.redAccent),
+                        // _buildDiseaseCard(context, 'Heart Disease', Icons.favorite, Colors.redAccent),
+                        // const SizedBox(height: 16),
+                        // _buildDiseaseCard(context, 'Lung Disease', Icons.air, Colors.blueAccent),
                         const SizedBox(height: 16),
-                        _buildDiseaseCard(context, 'Lung Disease', Icons.air, Colors.blueAccent),
+                        _buildDiseaseCard(context, 'Pneumonia',
+                            Icons.medical_services, Colors.greenAccent),
                         const SizedBox(height: 16),
-                        _buildDiseaseCard(context, 'Pneumonia', Icons.medical_services, Colors.greenAccent),
-                        const SizedBox(height: 16),
-                        _buildDiseaseCard(context, 'Brain Tumor', Icons.memory_outlined, Colors.purpleAccent),
+                        // _buildDiseaseCard(context, 'Brain Tumor', Icons.memory_outlined, Colors.purpleAccent),
                       ],
                     ),
                   ),
@@ -83,7 +84,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDiseaseCard(BuildContext context, String title, IconData icon, Color accentColor) {
+  Widget _buildDiseaseCard(
+      BuildContext context, String title, IconData icon, Color accentColor) {
     return GestureDetector(
       onTap: () {
         Navigator.push(

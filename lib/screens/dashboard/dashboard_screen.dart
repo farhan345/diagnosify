@@ -1,15 +1,15 @@
-import 'package:diagnosify/screens/profie_screen.dart';
+import 'package:diagnosify/screens/profile/profie_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:diagnosify/screens/home_screen.dart';
+import 'package:diagnosify/screens/dashboard/home_screen.dart';
 
-class MainScreenCombined extends StatefulWidget {
-  const MainScreenCombined({super.key});
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
   @override
-  State<MainScreenCombined> createState() => _MainScreenCombinedState();
+  State<DashboardScreen> createState() => _MainScreenCombinedState();
 }
 
-class _MainScreenCombinedState extends State<MainScreenCombined> {
+class _MainScreenCombinedState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[

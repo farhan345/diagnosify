@@ -1,0 +1,29 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "diagnosify-c400e",
+          "appId": "1:499940209322:android:4ec7e9cc45049c59c396d3",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "diagnosify-c400e",
+          "configurations": {
+            "android": "1:499940209322:android:4ec7e9cc45049c59c396d3",
+            "ios": "1:499940209322:ios:d941b1817c82cb6dc396d3",
+            "macos": "1:499940209322:ios:d941b1817c82cb6dc396d3",
+            "web": "1:499940209322:web:f8fcf6d10b58f73fc396d3",
+            "windows": "1:499940209322:web:566980db30431425c396d3"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

@@ -1,7 +1,12 @@
+// upload_image_page.dart
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:diagnosify/screens/dashboard/loading_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:diagnosify/screens/disease_result_screen.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:image/image.dart' as img;
 import 'dart:io';
 
 class UploadImagePage extends StatefulWidget {
@@ -17,6 +22,82 @@ class _UploadImagePageState extends State<UploadImagePage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  late Interpreter _interpreter;
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel();
+  }
+
+  @override
+  void dispose() {
+    _interpreter.close();
+    super.dispose();
+  }
+
+  Future<void> loadModel() async {
+    try {
+      final interpreterOptions = InterpreterOptions();
+      _interpreter = await Interpreter.fromAsset('assets/model.tflite',
+          options: interpreterOptions);
+      debugPrint('Model loaded successfully');
+    } catch (e) {
+      debugPrint('Error loading model: $e');
+    }
+  }
+
+  Future<List<List<List<List<double>>>>> preprocessImage(File imageFile) async {
+    final imageData = await imageFile.readAsBytes();
+    final image = img.decodeImage(imageData);
+    if (image == null) throw Exception('Failed to decode image');
+
+    final resizedImage = img.copyResize(image, width: 224, height: 224);
+
+    var inputArray = List.generate(
+      1,
+      (_) => List.generate(
+        224,
+        (_) => List.generate(
+          224,
+          (_) => List.generate(3, (_) => 0.0),
+        ),
+      ),
+    );
+
+    for (var y = 0; y < resizedImage.height; y++) {
+      for (var x = 0; x < resizedImage.width; x++) {
+        final pixel = resizedImage.getPixel(x, y);
+        inputArray[0][y][x][0] = pixel.r / 255.0;
+        inputArray[0][y][x][1] = pixel.g / 255.0;
+        inputArray[0][y][x][2] = pixel.b / 255.0;
+      }
+    }
+
+    return inputArray;
+  }
+
+  Future<Map<String, dynamic>> runInference(File imageFile) async {
+    try {
+      final input = await preprocessImage(imageFile);
+      var output = List.filled(1 * 2, 0.0).reshape([1, 2]);
+
+      _interpreter.run(input, output);
+
+      final result = output[0] as List<double>;
+      final confidence = result.reduce((a, b) => a > b ? a : b) * 100;
+      final isPositive = result[1] > result[0];
+
+      return {
+        'isPneumonia': isPositive,
+        'confidence': confidence,
+        'rawOutput': result,
+      };
+    } catch (e) {
+      debugPrint('Error running inference: $e');
+      rethrow;
+    }
+  }
 
   Future<void> _getImage(ImageSource source) async {
     try {
@@ -27,7 +108,6 @@ class _UploadImagePageState extends State<UploadImagePage> {
         });
       }
     } catch (e) {
-      // Handle any errors here
       debugPrint('Error picking image: $e');
     }
   }
@@ -54,7 +134,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: Color(0xffB81736)),
+                leading:
+                    const Icon(Icons.photo_library, color: Color(0xffB81736)),
                 title: const Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
@@ -91,7 +172,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back_ios,
+                            color: Colors.white),
                         onPressed: () => Navigator.pop(context),
                       ),
                       Text(
@@ -150,7 +232,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                         const SizedBox(height: 30),
                         ElevatedButton.icon(
                           onPressed: _showImageSourceDialog,
-                          icon: const Icon(Icons.cloud_upload, color: Colors.white),
+                          icon: const Icon(Icons.cloud_upload,
+                              color: Colors.white),
                           label: const Text(
                             'Upload Image',
                             style: TextStyle(color: Colors.white),
@@ -170,18 +253,25 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               ? null
                               : () async {
                                   setState(() => _isLoading = true);
-                                  // Simulate processing delay
-                                  await Future.delayed(
-                                      const Duration(seconds: 2));
-                                  setState(() => _isLoading = false);
-                                  if (mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const DiseaseDetectionPage(),
-                                      ),
+                                  try {
+                                    final result = await runInference(_image!);
+                                    if (mounted) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoadingScreen(
+                                            result: result,
+                                            imagePath: _image!.path,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error: $e')),
                                     );
+                                  } finally {
+                                    setState(() => _isLoading = false);
                                   }
                                 },
                           icon: _isLoading

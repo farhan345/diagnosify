@@ -1,6 +1,9 @@
-import 'package:diagnosify/screens/welcome_screen.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:diagnosify/screens/authentication/welcome_screen.dart';
+import 'package:diagnosify/screens/dashboard/dashboard_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:diagnosify/screens/login_screen.dart'; // Import the LoginScreen
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,12 +16,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to the LoginScreen after a delay
+    // Navigate to the appropriate screen after a delay
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const WelcomeScreen(),
+          builder: (context) => const AuthHandler(),
         ),
       );
     });
@@ -40,6 +43,27 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class AuthHandler extends StatelessWidget {
+  const AuthHandler({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            return const DashboardScreen();
+          } else {
+            return const WelcomeScreen();
+          }
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

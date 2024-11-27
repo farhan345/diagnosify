@@ -1,5 +1,5 @@
-import 'package:diagnosify/screens/login_screen.dart';
-import 'package:diagnosify/screens/signup_screen.dart';
+import 'package:diagnosify/screens/authentication/login_screen.dart';
+import 'package:diagnosify/screens/authentication/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {

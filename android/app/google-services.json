@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "499940209322",
+    "project_id": "diagnosify-c400e",
+    "storage_bucket": "diagnosify-c400e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499940209322:android:4ec7e9cc45049c59c396d3",
+        "android_client_info": {
+          "package_name": "com.example.diagnosify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXkfm-770GjgDE5zXEWH-a8MF6_ma3l0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
