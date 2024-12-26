@@ -39,7 +39,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
   Future<void> loadModel() async {
     try {
       final interpreterOptions = InterpreterOptions();
-      _interpreter = await Interpreter.fromAsset('assets/model.tflite',
+      _interpreter = await Interpreter.fromAsset('assets/brain_model.tflite',
           options: interpreterOptions);
       debugPrint('Model loaded successfully');
     } catch (e) {
