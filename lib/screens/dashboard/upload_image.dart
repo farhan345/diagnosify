@@ -24,6 +24,9 @@ class _UploadImagePageState extends State<UploadImagePage> {
   bool _isLoading = false;
   late Interpreter _interpreter;
 
+  // Define the labels for our classes
+  final List<String> _labels = ['glioma', 'meningioma', 'notumor', 'pituitary'];
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +42,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
   Future<void> loadModel() async {
     try {
       final interpreterOptions = InterpreterOptions();
-      _interpreter = await Interpreter.fromAsset('assets/brain_model.tflite',
+      // Make sure your model file is in the assets folder and properly referenced in pubspec.yaml
+      _interpreter = await Interpreter.fromAsset('assets/new_model.tflite',
           options: interpreterOptions);
       debugPrint('Model loaded successfully');
     } catch (e) {
@@ -52,6 +56,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
     final image = img.decodeImage(imageData);
     if (image == null) throw Exception('Failed to decode image');
 
+    // Resize to 224x224 as per Teachable Machine's requirements
     final resizedImage = img.copyResize(image, width: 224, height: 224);
 
     var inputArray = List.generate(
@@ -65,6 +70,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
       ),
     );
 
+    // Convert and normalize the image data
     for (var y = 0; y < resizedImage.height; y++) {
       for (var x = 0; x < resizedImage.width; x++) {
         final pixel = resizedImage.getPixel(x, y);
@@ -80,17 +86,33 @@ class _UploadImagePageState extends State<UploadImagePage> {
   Future<Map<String, dynamic>> runInference(File imageFile) async {
     try {
       final input = await preprocessImage(imageFile);
-      var output = List.filled(1 * 2, 0.0).reshape([1, 2]);
+      // Update output shape to match number of classes (4)
+      var output = List.filled(1 * 4, 0.0).reshape([1, 4]);
 
       _interpreter.run(input, output);
 
       final result = output[0] as List<double>;
-      final confidence = result.reduce((a, b) => a > b ? a : b) * 100;
-      final isPositive = result[1] > result[0];
+
+      // Find the class with highest confidence
+      int maxIndex = 0;
+      double maxConfidence = result[0];
+      for (int i = 1; i < result.length; i++) {
+        if (result[i] > maxConfidence) {
+          maxIndex = i;
+          maxConfidence = result[i];
+        }
+      }
+
+      // Create a map of all probabilities
+      Map<String, String> probabilities = {};
+      for (int i = 0; i < _labels.length; i++) {
+        probabilities[_labels[i]] = '${(result[i] * 100).toStringAsFixed(2)}%';
+      }
 
       return {
-        'isPneumonia': isPositive,
-        'confidence': confidence,
+        'predictedClass': _labels[maxIndex],
+        'confidence': maxConfidence * 100,
+        'allProbabilities': probabilities,
         'rawOutput': result,
       };
     } catch (e) {
@@ -208,7 +230,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black
+                                      .withAlpha((0.1 * 255).toInt()),
                                   blurRadius: 10,
                                   offset: const Offset(0, 5),
                                 ),
@@ -295,8 +318,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             ),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 15, horizontal: 30),
-                            disabledBackgroundColor:
-                                const Color(0xff281537).withOpacity(0.5),
+                            disabledBackgroundColor: const Color(0xff281537)
+                                .withAlpha((0.5 * 255).toInt()),
                           ),
                         ).animate().fadeIn(delay: 700.ms).slideY(),
                       ],
