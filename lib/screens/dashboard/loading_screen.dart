@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:diagnosify/screens/dashboard/disease_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -35,7 +33,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void _startLoading() {
-    const totalDuration = Duration(milliseconds: 3000); // 3 seconds total
+    const totalDuration = Duration(milliseconds: 3000);
     const progressInterval = Duration(milliseconds: 30);
     final steps =
         totalDuration.inMilliseconds ~/ progressInterval.inMilliseconds;
@@ -48,7 +46,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
       } else {
         setState(() {
           _progress += progressIncrement;
-          // Update loading text
           if (_progress > 25 && _currentTextIndex == 0) {
             _currentTextIndex = 1;
           } else if (_progress > 50 && _currentTextIndex == 1) {
@@ -63,13 +60,26 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void _navigateToResult() {
     Future.delayed(const Duration(milliseconds: 500), () {
+      // Extract the predicted class and determine if it's a brain tumor
+      String predictedClass = widget.result['predictedClass'] as String;
+      bool isBrainTumor = predictedClass != 'notumor';
+
+      // Get the confidence value
+      double confidence = widget.result['confidence'] as double;
+
+      // Get all probabilities for detailed report
+      Map<String, String> probabilities =
+          widget.result['allProbabilities'] as Map<String, String>;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => DiseaseDetectionPage(
-            isPneumonia: widget.result['isPneumonia'],
-            confidence: widget.result['confidence'],
+            isBrainTumor: isBrainTumor,
+            confidence: confidence,
             imagePath: widget.imagePath,
+            predictedClass: predictedClass,
+            probabilities: probabilities,
           ),
         ),
       );
@@ -78,6 +88,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Rest of the build method remains the same
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -92,7 +103,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Circular progress with percentage
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -119,7 +129,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                // Loading text with fade transition
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 500),
                   child: Text(
@@ -133,7 +142,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Linear progress indicator
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ClipRRect(
