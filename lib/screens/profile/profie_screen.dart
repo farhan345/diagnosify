@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:diagnosify/screens/authentication/login_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:diagnosify/widgets/custom_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -182,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Color(0xffB81736), Color(0xff281537)],
+                      colors: AppColors.gradientColors,
                     ),
                   ),
                 ),
@@ -306,7 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   child: CircleAvatar(
-                    backgroundColor: const Color(0xffB81736),
+                    backgroundColor: AppColors.primaryRed,
                     backgroundImage: _newImageFile != null
                         ? FileImage(_newImageFile!)
                         : (userData?['profileImageUrl'] != null
@@ -329,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xffB81736),
+                      color: AppColors.primaryRed,
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
@@ -426,7 +427,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ElevatedButton(
                 onPressed: _signOut,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffB81736),
+                  backgroundColor: AppColors.primaryRed,
                   foregroundColor: Colors.white,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
@@ -434,12 +435,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: 8,
-                  shadowColor: const Color(0xffB81736).withOpacity(0.5),
+                  shadowColor: AppColors.primaryRed.withOpacity(0.5),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.logout, size: 20),
+                    Icon(Icons.logout, size: 20, color: Colors.white),
                     SizedBox(width: 8),
                     Text(
                       'Sign Out',
@@ -482,12 +483,12 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xffB81736).withOpacity(0.1),
+              color: AppColors.primaryRed.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: const Color(0xffB81736),
+              color: AppColors.primaryRed,
               size: 24,
             ),
           ),

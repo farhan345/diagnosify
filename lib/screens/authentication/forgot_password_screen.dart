@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -55,15 +56,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: SingleChildScrollView(
         child: Container(
           height: size.height,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xffB81736).withOpacity(0.9),
-                const Color(0xff281537),
-              ],
-            ),
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: AppColors.gradientColors),
           ),
           child: SafeArea(
             child: Column(
@@ -130,14 +127,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ElevatedButton(
                             onPressed: _isLoading ? null : _resetPassword,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xffB81736),
+                              backgroundColor: AppColors.primaryRed,
                               minimumSize: Size(size.width * 0.8, 55),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               elevation: 5,
                               shadowColor:
-                                  const Color(0xffB81736).withOpacity(0.5),
+                                  AppColors.primaryRed.withOpacity(0.5),
                             ),
                             child: _isLoading
                                 ? const CircularProgressIndicator(
@@ -159,7 +156,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             child: const Text(
                               'Back to Sign In',
                               style: TextStyle(
-                                color: Color(0xffB81736),
+                                color: AppColors.primaryRed,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -181,7 +178,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   InputDecoration _buildInputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xffB81736)),
+      labelStyle: const TextStyle(color: AppColors.primaryRed),
       prefixIcon: Icon(icon, color: Colors.grey),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -189,7 +186,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: Color(0xffB81736)),
+        borderSide: const BorderSide(color: AppColors.primaryRed),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),

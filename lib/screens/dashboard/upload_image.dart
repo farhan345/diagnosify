@@ -2,6 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:diagnosify/screens/dashboard/loading_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -148,7 +149,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: Color(0xffB81736)),
+                leading:
+                    const Icon(Icons.camera_alt, color: AppColors.primaryRed),
                 title: const Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
@@ -156,8 +158,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                 },
               ),
               ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: Color(0xffB81736)),
+                leading: const Icon(Icons.photo_library,
+                    color: AppColors.primaryRed),
                 title: const Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
@@ -181,7 +183,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xffB81736), Color(0xff281537)],
+                colors: AppColors.gradientColors,
               ),
             ),
           ),
@@ -248,7 +250,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                                 : const Icon(
                                     Icons.add_a_photo,
                                     size: 80,
-                                    color: Color(0xffB81736),
+                                    color: AppColors.primaryRed,
                                   ),
                           ),
                         ).animate().scale(delay: 300.ms),
@@ -262,7 +264,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffB81736),
+                            backgroundColor: AppColors.primaryRed,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

@@ -1,6 +1,8 @@
 import 'package:diagnosify/screens/dashboard/disease_result_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:lottie/lottie.dart';
 
 class LoadingScreen extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -60,14 +62,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void _navigateToResult() {
     Future.delayed(const Duration(milliseconds: 500), () {
-      // Extract the predicted class and determine if it's a brain tumor
       String predictedClass = widget.result['predictedClass'] as String;
       bool isBrainTumor = predictedClass != 'notumor';
-
-      // Get the confidence value
       double confidence = widget.result['confidence'] as double;
-
-      // Get all probabilities for detailed report
       Map<String, String> probabilities =
           widget.result['allProbabilities'] as Map<String, String>;
 
@@ -88,14 +85,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Rest of the build method remains the same
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xffB81736), Color(0xff281537)],
+            colors: AppColors.gradientColors,
           ),
         ),
         child: SafeArea(
@@ -103,30 +99,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: CircularProgressIndicator(
-                        value: _progress / 100,
-                        strokeWidth: 12,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Colors.white,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${_progress.toInt()}%',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                // Lottie Animation
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Lottie.asset(
+                    'assets/dloader.json', // Replace with your Lottie JSON path
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(height: 40),
                 AnimatedSwitcher(

@@ -1,3 +1,4 @@
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -31,18 +32,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       obscureText: widget.isPassword ? _obscureText : false,
-      cursorColor: const Color(0xffB81736),
+      cursorColor: AppColors.primaryRed,
       decoration: InputDecoration(
         prefixIcon: Icon(widget.icon, color: Colors.grey),
         labelText: widget.label,
-        labelStyle: const TextStyle(color: Color(0xffB81736)),
+        labelStyle: const TextStyle(color: AppColors.primaryRed),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Color(0xffB81736)),
+          borderSide: const BorderSide(color: AppColors.primaryRed),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
@@ -70,18 +71,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
               )
             : null,
       ),
-      validator: widget.validator ?? (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter ${widget.label}';
-        }
-        if (widget.isPassword && value.length < 6) {
-          return 'Password must be at least 6 characters';
-        }
-        if (!widget.isPassword && widget.label == 'Email' && !value.contains('@')) {
-          return 'Please enter a valid email';
-        }
-        return null;
-      },
+      validator: widget.validator ??
+          (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter ${widget.label}';
+            }
+            if (widget.isPassword && value.length < 6) {
+              return 'Password must be at least 6 characters';
+            }
+            if (!widget.isPassword &&
+                widget.label == 'Email' &&
+                !value.contains('@')) {
+              return 'Please enter a valid email';
+            }
+            return null;
+          },
     );
   }
 }

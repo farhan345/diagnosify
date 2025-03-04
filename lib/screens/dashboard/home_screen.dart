@@ -1,6 +1,8 @@
 import 'package:diagnosify/screens/dashboard/upload_image.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,21 +13,20 @@ class HomePage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xffB81736), Color(0xff281537)],
-          ),
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: AppColors.gradientColors),
         ),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Diagnosify',
                       style: TextStyle(
                         fontSize: 32,
@@ -33,14 +34,7 @@ class HomePage extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Select a disease to diagnose',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                    ),
+                    SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -57,15 +51,9 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       children: [
-                        // _buildDiseaseCard(context, 'Heart Disease', Icons.favorite, Colors.redAccent),
-                        // const SizedBox(height: 16),
-                        // _buildDiseaseCard(context, 'Lung Disease', Icons.air, Colors.blueAccent),
-                        // const SizedBox(height: 16),
-                        // _buildDiseaseCard(context, 'Pneumonia',
-                        //     Icons.medical_services, Colors.greenAccent),
                         const SizedBox(height: 16),
                         _buildDiseaseCard(context, 'Brain Tumor',
-                            Icons.memory_outlined, Colors.purpleAccent),
+                            FontAwesomeIcons.brain, Colors.purpleAccent),
                       ],
                     ),
                   ),
@@ -75,13 +63,6 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // Add functionality for FAB
-      //   },
-      //   child: const Icon(Icons.history),
-      //   backgroundColor: const Color(0xffB81736),
-      // ),
     );
   }
 
@@ -98,12 +79,7 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xffB81736).withOpacity(0.8),
-              const Color(0xff281537).withOpacity(0.8),
-            ],
-          ),
+          gradient: LinearGradient(colors: AppColors.gradientColors),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(

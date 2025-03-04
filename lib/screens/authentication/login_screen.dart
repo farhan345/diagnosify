@@ -1,8 +1,6 @@
-// login_screen.dart
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:diagnosify/screens/authentication/forgot_password_screen.dart';
 import 'package:diagnosify/screens/dashboard/dashboard_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:diagnosify/widgets/custom_field.dart';
 import 'package:diagnosify/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -72,14 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
               SingleChildScrollView(
                 child: Container(
                   height: size.height,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        const Color(0xffB81736).withOpacity(0.9),
-                        const Color(0xff281537),
-                      ],
+                      colors: AppColors
+                          .gradientColors, // Use gradientColors from AppColors
                     ),
                   ),
                   child: SafeArea(
@@ -100,7 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ? 36
                                           : 40,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: AppColors
+                                      .white, // Use white from AppColors
                                   height: 1.2,
                                 ),
                               ).animate().fadeIn(duration: 500.ms).slideX(),
@@ -171,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: const Text(
                                         'Forgot Password?',
                                         style: TextStyle(
-                                          color: Color(0xffB81736),
+                                          color: AppColors.primaryRed,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -181,7 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ElevatedButton(
                                     onPressed: _isLoading ? null : _signIn,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xffB81736),
+                                      backgroundColor: AppColors
+                                          .primaryRed, // Use primaryRed from AppColors
                                       minimumSize: Size(
                                         size.width * (isMobile ? 0.8 : 0.6),
                                         55,
@@ -223,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: const Text(
                                           'Sign Up',
                                           style: TextStyle(
-                                            color: Color(0xffB81736),
+                                            color: AppColors.primaryRed,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

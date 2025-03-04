@@ -1,3 +1,4 @@
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -323,7 +324,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xffB81736), Color(0xff281537)],
+            colors: AppColors.gradientColors,
           ),
         ),
         child: SafeArea(
@@ -403,7 +404,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
             height: 150,
             child: Lottie.asset(
               widget.isBrainTumor
-                  ? 'assets/caring.json'
+                  ? 'assets/caringnew.json'
                   : 'assets/celebration.json',
               controller: _animationController,
               fit: BoxFit.contain,
@@ -666,7 +667,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xffB81736),
+              backgroundColor: AppColors.primaryRed,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),

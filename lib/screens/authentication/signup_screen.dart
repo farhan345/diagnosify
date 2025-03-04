@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:diagnosify/widgets/custom_field.dart';
 import 'package:diagnosify/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,7 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _isLoading = true);
 
     try {
+      // Create user with email and password
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -90,24 +92,29 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       String? imageUrl;
+
+      // If an image is uploaded, handle the upload process
       if (_imageFile != null) {
         imageUrl = await _uploadImage(_imageFile!);
       }
 
+      // Save user details in Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'phone': _phoneNumber,
-        'profileImageUrl': imageUrl ?? '',
+        'profileImageUrl': imageUrl ?? '', // Optional image URL
         'createdAt': Timestamp.now(),
       });
 
+      // Update the user's profile with the display name and photo URL (if provided)
       await userCredential.user!.updateProfile(
         displayName: _nameController.text,
         photoURL: imageUrl,
       );
 
+      // Navigate to the login screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -136,15 +143,11 @@ class _SignupScreenState extends State<SignupScreen> {
               body: SingleChildScrollView(
                 child: Container(
                   height: size.height,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        const Color(0xffB81736).withOpacity(0.9),
-                        const Color(0xff281537),
-                      ],
-                    ),
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: AppColors.gradientColors),
                   ),
                   child: SafeArea(
                     child: Column(
@@ -164,7 +167,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           ? 36
                                           : 40,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   height: 1.2,
                                 ),
                               ).animate().fadeIn(duration: 500.ms).slideX(),
@@ -172,7 +175,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               const Text(
                                 'Sign up to get started',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: AppColors.white70,
                                   fontSize: 16,
                                 ),
                               )
@@ -186,7 +189,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: const BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(30),
                                 topRight: Radius.circular(30),
@@ -208,7 +211,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 : isTablet
                                                     ? 45
                                                     : 50,
-                                            backgroundColor: Colors.grey[200],
+                                            backgroundColor: AppColors.grey,
                                             backgroundImage: _imageFile != null
                                                 ? FileImage(_imageFile!)
                                                 : null,
@@ -216,7 +219,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 ? const Icon(
                                                     Icons.add_a_photo,
                                                     size: 30,
-                                                    color: Color(0xffB81736),
+                                                    color: AppColors.primaryRed,
                                                   )
                                                 : null,
                                           ),
@@ -226,13 +229,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                             child: Container(
                                               padding: const EdgeInsets.all(4),
                                               decoration: const BoxDecoration(
-                                                color: Color(0xffB81736),
+                                                color: AppColors.primaryRed,
                                                 shape: BoxShape.circle,
                                               ),
                                               child: const Icon(
                                                 Icons.edit,
                                                 size: 16,
-                                                color: Colors.white,
+                                                color: AppColors.white,
                                               ),
                                             ),
                                           ),
@@ -262,11 +265,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                           vertical: 8.0),
                                       child: IntlPhoneField(
                                         dropdownTextStyle: const TextStyle(
-                                            color: Color(0xffB81736)),
+                                            color: AppColors.primaryRed),
                                         decoration: InputDecoration(
                                           labelText: 'Phone Number',
                                           labelStyle: const TextStyle(
-                                              color: Color(0xffB81736)),
+                                              color: AppColors.primaryRed),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(30),
@@ -277,7 +280,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             borderSide: const BorderSide(
-                                                color: Color(0xffB81736)),
+                                                color: AppColors.primaryRed),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
@@ -300,7 +303,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           ),
                                         ),
                                         initialCountryCode: 'US',
-                                        cursorColor: const Color(0xffB81736),
+                                        cursorColor: AppColors.primaryRed,
                                         onChanged: (phone) {
                                           setState(() {
                                             _phoneNumber = phone.completeNumber;
@@ -326,8 +329,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ElevatedButton(
                                       onPressed: _isLoading ? null : _signUp,
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xffB81736),
+                                        backgroundColor: AppColors.primaryRed,
                                         minimumSize: Size(
                                           size.width * (isMobile ? 0.8 : 0.6),
                                           55,
@@ -339,13 +341,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                       ),
                                       child: _isLoading
                                           ? const CircularProgressIndicator(
-                                              color: Colors.white)
+                                              color: AppColors.white)
                                           : const Text(
                                               'SIGN UP',
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: AppColors.white,
                                               ),
                                             ),
                                     ).animate().fadeIn(delay: 800.ms).scale(),
@@ -356,7 +358,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                       children: [
                                         const Text(
                                           'Already have an account? ',
-                                          style: TextStyle(color: Colors.grey),
+                                          style:
+                                              TextStyle(color: AppColors.grey),
                                         ),
                                         TextButton(
                                           onPressed: () {
@@ -371,7 +374,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           child: const Text(
                                             'Sign In',
                                             style: TextStyle(
-                                              color: Color(0xffB81736),
+                                              color: AppColors.primaryRed,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),

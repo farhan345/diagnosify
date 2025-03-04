@@ -1,4 +1,5 @@
 import 'package:diagnosify/screens/profile/profie_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:diagnosify/screens/dashboard/home_screen.dart';
 
@@ -53,10 +54,9 @@ class _MainScreenCombinedState extends State<DashboardScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xffB81736), Color(0xff281537)],
-          ),
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: AppColors.gradientColors),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
@@ -131,7 +131,7 @@ class _MainScreenCombinedState extends State<DashboardScreen> {
           ),
         ),
       ),
-      extendBody: true, // This allows the body to extend behind the bottom navigation bar
+      extendBody: true,
     );
   }
 }

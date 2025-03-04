@@ -1,5 +1,6 @@
 import 'package:diagnosify/screens/authentication/login_screen.dart';
 import 'package:diagnosify/screens/authentication/signup_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -18,10 +19,7 @@ class WelcomeScreen extends StatelessWidget {
           width: screenWidth,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xffB81736),
-                Color(0xff281537),
-              ],
+              colors: AppColors.gradientColors,
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -30,15 +28,17 @@ class WelcomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: screenHeight * 0.2), // Responsive padding
+                padding: EdgeInsets.only(
+                    top: screenHeight * 0.2), // Responsive padding
                 child: const CircleAvatar(
                   radius: 75, // CircleAvatar size
                   backgroundImage: AssetImage('assets/logo1.png'),
-                  
+
                   backgroundColor: Colors.white,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.1), // Adjust based on screen height
+              SizedBox(
+                  height: screenHeight * 0.1), // Adjust based on screen height
               const Text(
                 'Welcome Back',
                 style: TextStyle(
