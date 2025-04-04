@@ -2,7 +2,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:diagnosify/screens/dashboard/loading_screen.dart';
-import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -25,9 +24,6 @@ class _UploadImagePageState extends State<UploadImagePage> {
   bool _isLoading = false;
   late Interpreter _interpreter;
 
-  // Define the labels for our classes
-  final List<String> _labels = ['glioma', 'meningioma', 'notumor', 'pituitary'];
-
   @override
   void initState() {
     super.initState();
@@ -43,8 +39,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
   Future<void> loadModel() async {
     try {
       final interpreterOptions = InterpreterOptions();
-      // Make sure your model file is in the assets folder and properly referenced in pubspec.yaml
-      _interpreter = await Interpreter.fromAsset('assets/new_model.tflite',
+      _interpreter = await Interpreter.fromAsset('assets/model.tflite',
           options: interpreterOptions);
       debugPrint('Model loaded successfully');
     } catch (e) {
@@ -57,7 +52,6 @@ class _UploadImagePageState extends State<UploadImagePage> {
     final image = img.decodeImage(imageData);
     if (image == null) throw Exception('Failed to decode image');
 
-    // Resize to 224x224 as per Teachable Machine's requirements
     final resizedImage = img.copyResize(image, width: 224, height: 224);
 
     var inputArray = List.generate(
@@ -71,7 +65,6 @@ class _UploadImagePageState extends State<UploadImagePage> {
       ),
     );
 
-    // Convert and normalize the image data
     for (var y = 0; y < resizedImage.height; y++) {
       for (var x = 0; x < resizedImage.width; x++) {
         final pixel = resizedImage.getPixel(x, y);
@@ -87,33 +80,17 @@ class _UploadImagePageState extends State<UploadImagePage> {
   Future<Map<String, dynamic>> runInference(File imageFile) async {
     try {
       final input = await preprocessImage(imageFile);
-      // Update output shape to match number of classes (4)
-      var output = List.filled(1 * 4, 0.0).reshape([1, 4]);
+      var output = List.filled(1 * 2, 0.0).reshape([1, 2]);
 
       _interpreter.run(input, output);
 
       final result = output[0] as List<double>;
-
-      // Find the class with highest confidence
-      int maxIndex = 0;
-      double maxConfidence = result[0];
-      for (int i = 1; i < result.length; i++) {
-        if (result[i] > maxConfidence) {
-          maxIndex = i;
-          maxConfidence = result[i];
-        }
-      }
-
-      // Create a map of all probabilities
-      Map<String, String> probabilities = {};
-      for (int i = 0; i < _labels.length; i++) {
-        probabilities[_labels[i]] = '${(result[i] * 100).toStringAsFixed(2)}%';
-      }
+      final confidence = result.reduce((a, b) => a > b ? a : b) * 100;
+      final isPositive = result[1] > result[0];
 
       return {
-        'predictedClass': _labels[maxIndex],
-        'confidence': maxConfidence * 100,
-        'allProbabilities': probabilities,
+        'isPneumonia': isPositive,
+        'confidence': confidence,
         'rawOutput': result,
       };
     } catch (e) {
@@ -149,8 +126,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading:
-                    const Icon(Icons.camera_alt, color: AppColors.primaryRed),
+                leading: const Icon(Icons.camera_alt, color: Color(0xffB81736)),
                 title: const Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
@@ -158,8 +134,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library,
-                    color: AppColors.primaryRed),
+                leading:
+                    const Icon(Icons.photo_library, color: Color(0xffB81736)),
                 title: const Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
@@ -183,7 +159,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: AppColors.gradientColors,
+                colors: [Color(0xffB81736), Color(0xff281537)],
               ),
             ),
           ),
@@ -232,8 +208,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black
-                                      .withAlpha((0.1 * 255).toInt()),
+                                  color: Colors.black.withOpacity(0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 5),
                                 ),
@@ -250,7 +225,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                                 : const Icon(
                                     Icons.add_a_photo,
                                     size: 80,
-                                    color: AppColors.primaryRed,
+                                    color: Color(0xffB81736),
                                   ),
                           ),
                         ).animate().scale(delay: 300.ms),
@@ -264,7 +239,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryRed,
+                            backgroundColor: const Color(0xffB81736),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -320,8 +295,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             ),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 15, horizontal: 30),
-                            disabledBackgroundColor: const Color(0xff281537)
-                                .withAlpha((0.5 * 255).toInt()),
+                            disabledBackgroundColor:
+                                const Color(0xff281537).withOpacity(0.5),
                           ),
                         ).animate().fadeIn(delay: 700.ms).slideY(),
                       ],

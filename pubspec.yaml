@@ -28,6 +28,9 @@ dependencies:
   intl:
   camera:
   font_awesome_flutter:
+  geolocator:
+  url_launcher: ^6.3.1
+  maps_launcher: ^3.0.0+1
 
 flutter_icons:
   android: "launcher_icon"

@@ -62,21 +62,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void _navigateToResult() {
     Future.delayed(const Duration(milliseconds: 500), () {
-      String predictedClass = widget.result['predictedClass'] as String;
-      bool isBrainTumor = predictedClass != 'notumor';
-      double confidence = widget.result['confidence'] as double;
-      Map<String, String> probabilities =
-          widget.result['allProbabilities'] as Map<String, String>;
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => DiseaseDetectionPage(
-            isBrainTumor: isBrainTumor,
-            confidence: confidence,
+            isPneumonia: widget.result['isPneumonia'],
+            confidence: widget.result['confidence'],
             imagePath: widget.imagePath,
-            predictedClass: predictedClass,
-            probabilities: probabilities,
           ),
         ),
       );
