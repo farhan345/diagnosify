@@ -2,6 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:diagnosify/screens/dashboard/loading_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -24,9 +25,23 @@ class _UploadImagePageState extends State<UploadImagePage> {
   bool _isLoading = false;
   late Interpreter _interpreter;
 
+  // Define allowed disease type
+  final List<String> _allowedDiseases = ['pneumonia'];
+
   @override
   void initState() {
     super.initState();
+    // Check if the passed disease is valid
+    if (!_allowedDiseases.contains(widget.disease.toLowerCase())) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('This page only supports pneumonia detection'),
+          ),
+        );
+        Navigator.pop(context);
+      });
+    }
     loadModel();
   }
 
@@ -101,14 +116,33 @@ class _UploadImagePageState extends State<UploadImagePage> {
 
   Future<void> _getImage(ImageSource source) async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(source: source);
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 85,
+      );
+
       if (pickedFile != null) {
+        String extension = pickedFile.path.toLowerCase();
+        if (!extension.endsWith('.jpg') &&
+            !extension.endsWith('.jpeg') &&
+            !extension.endsWith('.png')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please upload only JPG or PNG images'),
+            ),
+          );
+          return;
+        }
+
         setState(() {
           _image = File(pickedFile.path);
         });
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
     }
   }
 
@@ -126,7 +160,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: Color(0xffB81736)),
+                leading:
+                    const Icon(Icons.camera_alt, color: AppColors.primaryRed),
                 title: const Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
@@ -134,8 +169,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                 },
               ),
               ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: Color(0xffB81736)),
+                leading: const Icon(Icons.photo_library,
+                    color: AppColors.primaryRed),
                 title: const Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
@@ -159,7 +194,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xffB81736), Color(0xff281537)],
+                colors: AppColors.gradientColors,
               ),
             ),
           ),
@@ -208,7 +243,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black
+                                      .withAlpha((0.1 * 255).toInt()),
                                   blurRadius: 10,
                                   offset: const Offset(0, 5),
                                 ),
@@ -225,7 +261,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                                 : const Icon(
                                     Icons.add_a_photo,
                                     size: 80,
-                                    color: Color(0xffB81736),
+                                    color: AppColors.primaryRed,
                                   ),
                           ),
                         ).animate().scale(delay: 300.ms),
@@ -239,7 +275,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffB81736),
+                            backgroundColor: AppColors.primaryRed,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -295,8 +331,8 @@ class _UploadImagePageState extends State<UploadImagePage> {
                             ),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 15, horizontal: 30),
-                            disabledBackgroundColor:
-                                const Color(0xff281537).withOpacity(0.5),
+                            disabledBackgroundColor: const Color(0xff281537)
+                                .withAlpha((0.5 * 255).toInt()),
                           ),
                         ).animate().fadeIn(delay: 700.ms).slideY(),
                       ],

@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
                       ),
                       children: [
                         const SizedBox(height: 16),
-                        _buildDiseaseCard(context, 'Brain Tumor',
+                        _buildDiseaseCard(context, 'Pneumonia',
                             FontAwesomeIcons.brain, Colors.purpleAccent),
                       ],
                     ),
@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: AppColors.gradientColors),
+          gradient: const LinearGradient(colors: AppColors.gradientColors),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
