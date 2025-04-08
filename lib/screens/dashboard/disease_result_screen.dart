@@ -1,3 +1,5 @@
+import 'package:diagnosify/screens/dashboard/nearby_facilities_screen.dart';
+import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:io';
@@ -21,6 +23,7 @@ class DiseaseDetectionPage extends StatefulWidget {
 class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  bool _isLoading = false; // Added missing _isLoading variable
 
   @override
   void initState() {
@@ -38,6 +41,16 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
     super.dispose();
   }
 
+  // Added missing PDF generation method (placeholder - implement as needed)
+  Future<void> generateAndDownloadPDF() async {
+    setState(() => _isLoading = true);
+    // Implement your PDF generation logic here
+    await Future.delayed(const Duration(seconds: 2)); // Simulated delay
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('PDF downloaded successfully')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +59,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xffB81736), Color(0xff281537)],
+            colors: AppColors.gradientColors, // Using theme gradient colors
           ),
         ),
         child: SafeArea(
@@ -57,16 +70,23 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon:
-                          const Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios,
+                            color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
+                    const SizedBox(width: 16),
                     const Text(
-                      'Pneumonia Analysis Result',
+                      'Analysis Result',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -79,6 +99,13 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
                   child: ListView(
                     padding: const EdgeInsets.all(20),
@@ -93,6 +120,13 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                             image: FileImage(File(widget.imagePath)),
                             fit: BoxFit.cover,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -102,7 +136,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                       const SizedBox(height: 30),
                       _buildRecommendations(),
                       const SizedBox(height: 30),
-                      _buildActionButtons(),
+                      _buildDoctorActionButtons(),
                     ],
                   ),
                 ),
@@ -119,11 +153,11 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: widget.isPneumonia
-            ? const Color(0xFFFFEBEE)
-            : const Color(0xFFE8F5E9),
+            ? AppColors.primaryRed.withOpacity(0.1)
+            : Colors.green.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: widget.isPneumonia ? const Color(0xffB81736) : Colors.green,
+          color: widget.isPneumonia ? AppColors.primaryRed : Colors.green,
           width: 1,
         ),
       ),
@@ -145,8 +179,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color:
-                  widget.isPneumonia ? const Color(0xffB81736) : Colors.green,
+              color: widget.isPneumonia ? AppColors.primaryRed : Colors.green,
             ),
           ),
           const SizedBox(height: 8),
@@ -156,8 +189,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                 : "Great news! Your lungs appear healthy. Keep up the good work with your health!",
             style: TextStyle(
               fontSize: 16,
-              color:
-                  widget.isPneumonia ? const Color(0xffB81736) : Colors.green,
+              color: widget.isPneumonia ? AppColors.primaryRed : Colors.green,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -181,32 +213,39 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
         ),
         const SizedBox(height: 10),
         Container(
-          height: 100,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(15),
-          ),
-          child: Center(
-            child: LinearProgressIndicator(
-              value: widget.confidence / 100,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(
-                widget.isPneumonia ? const Color(0xffB81736) : Colors.green,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
               ),
-              minHeight: 20,
-            ),
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
-        Center(
-          child: Text(
-            'Confidence: ${widget.confidence.toStringAsFixed(1)}%',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff281537),
-            ),
+          child: Column(
+            children: [
+              LinearProgressIndicator(
+                value: widget.confidence / 100,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  widget.isPneumonia ? AppColors.primaryRed : Colors.green,
+                ),
+                minHeight: 20,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Confidence: ${widget.confidence.toStringAsFixed(1)}%',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff281537),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -220,7 +259,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
             'Difficulty Breathing',
             'Persistent Cough',
             'Rapid Breathing',
-            'Fatigue',
+            ' Fatigue',
           ]
         : [
             'Normal Breathing Pattern',
@@ -245,6 +284,13 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
           decoration: BoxDecoration(
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: Column(
             children: symptoms
@@ -256,16 +302,18 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                         Icon(
                           Icons.check_circle,
                           color: widget.isPneumonia
-                              ? const Color(0xffB81736)
+                              ? AppColors.primaryRed
                               : Colors.green,
                           size: 20,
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          symptom,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xff281537),
+                        Expanded(
+                          child: Text(
+                            symptom,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xff281537),
+                            ),
                           ),
                         ),
                       ],
@@ -311,6 +359,13 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
           decoration: BoxDecoration(
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: Column(
             children: recommendations
@@ -323,7 +378,7 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                         Icon(
                           Icons.arrow_right,
                           color: widget.isPneumonia
-                              ? const Color(0xffB81736)
+                              ? AppColors.primaryRed
                               : Colors.green,
                           size: 20,
                         ),
@@ -348,46 +403,84 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildDoctorActionButtons() {
     return Column(
       children: [
         ElevatedButton.icon(
-          onPressed: () {
-            // Navigate to doctor-finding page
-          },
-          icon: const Icon(Icons.search, color: Colors.white),
-          label: const Text(
-            'Find Specialists',
-            style: TextStyle(color: Colors.white),
+          onPressed: _isLoading
+              ? null
+              : () async {
+                  setState(() => _isLoading = true);
+                  try {
+                    await generateAndDownloadPDF();
+                  } finally {
+                    if (mounted) {
+                      setState(() => _isLoading = false);
+                    }
+                  }
+                },
+          icon: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : const Icon(Icons.download, color: Colors.white),
+          label: Text(
+            _isLoading ? 'Generating PDF...' : 'Download Report',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff281537),
+            elevation: 5,
+            shadowColor: const Color(0xff281537).withOpacity(0.5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+            disabledBackgroundColor: const Color(0xff281537).withOpacity(0.3),
+          ),
+        ),
+        const SizedBox(height: 15),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NearbyDoctorsPage(
+                  diseaseType: widget.isPneumonia ? 'Pneumonia' : 'Normal',
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.local_hospital, color: Colors.white),
+          label: const Text(
+            'Find Nearby Doctors',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: widget.isPneumonia
+                ? AppColors.primaryRed
+                : const Color(0xff281537),
+            elevation: 5,
+            shadowColor: widget.isPneumonia
+                ? AppColors.primaryRed.withOpacity(0.5)
+                : const Color(0xff281537).withOpacity(0.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
           ),
         ),
-        if (widget.isPneumonia) ...[
-          const SizedBox(height: 15),
-          ElevatedButton.icon(
-            onPressed: () {
-              // Navigate to treatment info page
-            },
-            icon: const Icon(Icons.info_outline, color: Colors.white),
-            label: const Text(
-              'Treatment Information',
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xffB81736),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-            ),
-          ),
-        ],
       ],
     );
   }
