@@ -1,3 +1,4 @@
+import 'package:diagnosify/screens/dashboard/nearby_clinics.dart';
 import 'package:diagnosify/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -371,9 +372,12 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
                       const SizedBox(height: 30),
                       _buildObservationsList(),
                       const SizedBox(height: 30),
-                      // _buildRecommendations(),
+                      // // _buildRecommendations(),
+                      // const SizedBox(height: 30),
+                      // _buildActionButtons(),
+                      // // _buildRecommendations(),
                       const SizedBox(height: 30),
-                      _buildActionButtons(),
+                      _buildDoctorActionButtons(),
                     ],
                   ),
                 ),
@@ -675,6 +679,104 @@ class _DiseaseDetectionPageState extends State<DiseaseDetectionPage>
             ),
           ),
         ],
+      ],
+    );
+  }
+
+  Widget _buildDoctorActionButtons() {
+    return Column(
+      children: [
+        ElevatedButton.icon(
+          onPressed: _isLoading
+              ? null // Disable button while loading
+              : () async {
+                  try {
+                    await generateAndDownloadPDF();
+                  } finally {
+                    setState(() => _isLoading = false);
+                  }
+                },
+          icon: _isLoading
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                )
+              : const Icon(Icons.download, color: Colors.white),
+          label: Text(
+            _isLoading ? 'Generating PDF...' : 'Download Report',
+            style: const TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xff281537),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+          ),
+        ),
+
+        // Add Find Doctor button for all users, but especially prominent for those with tumors
+        const SizedBox(height: 15),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NearbyDoctorsPage(
+                  diseaseType: widget.isBrainTumor
+                      ? widget.predictedClass
+                      : 'neurologist',
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.local_hospital, color: Colors.white),
+          label: const Text(
+            'Find Nearby Doctors',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: widget.isBrainTumor
+                ? AppColors.primaryRed
+                : const Color(0xff281537),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+          ),
+        ),
+
+        // Keep the Treatment Information button for tumor cases
+        // if (widget.isBrainTumor) ...[
+        //   const SizedBox(height: 15),
+        //   ElevatedButton.icon(
+        //     onPressed: () {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(
+        //           content: Text('Treatment Information feature coming soon!'),
+        //         ),
+        //       );
+        //     },
+        //     icon: const Icon(Icons.info_outline, color: Colors.white),
+        //     label: const Text(
+        //       'Treatment Information',
+        //       style: TextStyle(color: Colors.white),
+        //     ),
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: AppColors.primaryRed,
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(30),
+        //       ),
+        //       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        //     ),
+        //   ),
+        // ],
       ],
     );
   }
