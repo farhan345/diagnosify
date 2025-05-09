@@ -32,7 +32,7 @@ class WelcomeScreen extends StatelessWidget {
                     top: screenHeight * 0.2), // Responsive padding
                 child: const CircleAvatar(
                   radius: 75, // CircleAvatar size
-                  backgroundImage: AssetImage('assets/logo1.png'),
+                  backgroundImage: AssetImage('assets/vitalscan.png'),
 
                   backgroundColor: Colors.white,
                 ),
